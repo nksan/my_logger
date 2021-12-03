@@ -1,5 +1,6 @@
 import sys
-import time
+#import time
+from datetime import datetime
 
 class mLOG:
     """
@@ -17,6 +18,10 @@ class mLOG:
 
     #set this to NEVER to disable logging
     current_level=DEV
+    #set this to true if need to print to console (like in VSCode debugging)
+    print_to_console = False
+    #must pass filename for logging to a file:
+    log_filename = ""
     
     @staticmethod
     def log(msg,identifier='',level=DEV,get_func_name=True):
@@ -27,11 +32,15 @@ class mLOG:
         level: must be greater or equal to  current_level class variable  to print
         """
         try:
-            if level >= mLOG.current_level:  #exit as soon as possible to not waste cpu cycles
+            if level >= mLOG.current_level: 
                 if get_func_name:
-                    print(f'{time.perf_counter()} {identifier}.{sys._getframe().f_back.f_code.co_name} - {msg}')
+                    log_msg = f'{datetime.now()} {identifier}.{sys._getframe().f_back.f_code.co_name} - {msg}'
                 else:
-                    print(f'{time.perf_counter()} {identifier} - {msg}')
+                    log_msg = f'{datetime.now()} {identifier} - {msg}'
+                if mLOG.log_filename:
+                    print(log_msg,file=open(mLOG.log_filename,'a+'))
+                if mLOG.print_to_console:
+                    print(log_msg)
         except:
             pass
 
